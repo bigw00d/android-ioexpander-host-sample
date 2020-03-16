@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">IO Expander Host Sample</string>
+    <string name="button">Button</string>
+    <string name="button1">Button 1</string>
+    <string name="button2">Button 2</string>
+    <string name="BootstrapLabel">Bootstrap Label</string>
+    <string name="hint">Input text</string>
+    <string name="label1">Bootstrap</string>
+    <string name="label2">Label</string>
+</resources>
