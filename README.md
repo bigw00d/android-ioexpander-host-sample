@@ -3,6 +3,10 @@ android-ioexpander-host-sample
 
 Android Host Sample Application for [arduino-ioexpander-fw](https://github.com/bigw00d/arduino-ioexpander-fw)
 
+## Overview
+
+<img width="80%" src="./ConnectWithPCTablet.png" />
+
 ## Requirement
 
 - Android Studio (Version: 3.3.2)
