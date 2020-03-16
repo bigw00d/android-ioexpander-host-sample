@@ -6,6 +6,7 @@ IO Expander Host Sample Application for Android
 ## Requirement
 
 - Android Studio (Version: 3.3.2)
+- Nexus 7 (2013)
 
 
 ## Licence
