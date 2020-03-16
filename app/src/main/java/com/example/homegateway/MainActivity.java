@@ -61,6 +61,9 @@ public class MainActivity extends AppCompatActivity {
 
         openUsb();
 
+        TextView textVersion = findViewById(R.id.textVersion);
+        textVersion.setText("v0.0.0.3");
+
 //        mInputValue = (TextView)findViewById(R.id.inputValue);
 
 //        // ボタンが押されたらUSBに値を送り込む
@@ -134,29 +137,58 @@ public class MainActivity extends AppCompatActivity {
                     Thread.sleep(50);
                 } catch (InterruptedException e) {
                 }
+                int len=0;
 
-                synchronized(ftDev)
-                {
-                    iavailable = ftDev.getQueueStatus();
-                    if (iavailable > 0) {
+                synchronized (ftDev) {
+                    len = ftDev.getQueueStatus();
+                }
 
-                        if(iavailable > readLength){
-                            iavailable = readLength;
-                        }
+                if(len > 0) {
+                    if(len > readLength) len = readLength;
+                    synchronized (ftDev) {
+                        len = ftDev.read(readData, len, 10); // timeout 10ms
+                    }
 
-                        ftDev.read(readData, iavailable);
-//                        String mData = new String(readData);
-                        StringBuilder sb = new StringBuilder();
-                        for (int index = 0; index < iavailable; index++) {
-                            sb.append(String.format(Locale.getDefault(), "%02x", readData[index])).append(" ");
-                        }
-                        String mData = sb.toString();
+                    StringBuilder sb = new StringBuilder();
+                    for (int idx = 0; idx < len; idx++) {
+                        sb.append(String.format(Locale.getDefault(), "%02x", readData[idx])).append(" ");
+                    }
+                    String mData = sb.toString();
 
-                        Message msg = mHandler.obtainMessage();
-                        msg.obj = mData;
-                        mHandler.sendMessage(msg);
+                    Message msg = mHandler.obtainMessage();
+                    msg.obj = mData;
+                    mHandler.sendMessage(msg);
+
+                }
+                else {
+                    synchronized (ftDev) {
+                        ftDev.read(readData, 1, 1); // dummy read(1 byte), timeout 1ms
                     }
                 }
+
+//                synchronized(ftDev)
+//                {
+//                    iavailable = ftDev.getQueueStatus();
+//                    if (iavailable > 0) {
+//
+//                        if(iavailable > readLength){
+//                            iavailable = readLength;
+//                        }
+//
+//                        ftDev.read(readData, iavailable);
+//
+////                        String mData = new String(readData);
+//                        StringBuilder sb = new StringBuilder();
+//                        for (int index = 0; index < iavailable; index++) {
+//                            sb.append(String.format(Locale.getDefault(), "%02x", readData[index])).append(" ");
+//                        }
+//                        String mData = sb.toString();
+//
+//                        Message msg = mHandler.obtainMessage();
+//                        msg.obj = mData;
+//                        mHandler.sendMessage(msg);
+//                    }
+//                }
             }
         }
     }
