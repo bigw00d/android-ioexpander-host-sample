@@ -56,7 +56,7 @@
         android:weightSum="6">
 
         <com.beardedhen.androidbootstrap.BootstrapButton
-            android:id="@+id/bootstrap_button1"
+            android:id="@+id/button_connect"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
@@ -70,7 +70,7 @@
             app:showOutline="false" />
 
         <com.beardedhen.androidbootstrap.BootstrapButton
-            android:id="@+id/bootstrap_button2"
+            android:id="@+id/button_discon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
@@ -84,7 +84,7 @@
             app:showOutline="false" />
 
         <com.beardedhen.androidbootstrap.BootstrapButton
-            android:id="@+id/bootstrap_button3"
+            android:id="@+id/button_send"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
@@ -98,7 +98,7 @@
             app:showOutline="false" />
 
         <com.beardedhen.androidbootstrap.BootstrapButton
-            android:id="@+id/bootstrap_button4"
+            android:id="@+id/button_clear"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"

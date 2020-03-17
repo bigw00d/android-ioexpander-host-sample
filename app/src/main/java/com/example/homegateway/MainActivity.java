@@ -28,6 +28,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.beardedhen.androidbootstrap.AwesomeTextView;
+import com.beardedhen.androidbootstrap.BootstrapButton;
+import com.beardedhen.androidbootstrap.BootstrapText;
 import com.ftdi.j2xx.D2xxManager;
 import com.ftdi.j2xx.FT_Device;
 
@@ -55,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void handleMessage(Message msg) {
             String mData = (String)msg.obj;
-            Toast.makeText(MainActivity.this, "Received USB Data: " + mData, Toast.LENGTH_LONG).show();
+//            Toast.makeText(MainActivity.this, "Received USB Data: " + mData, Toast.LENGTH_LONG).show();
             tv.append("RX <- " + mData + "\n");
         }
     };
@@ -84,7 +86,27 @@ public class MainActivity extends AppCompatActivity {
 
 //        mInputValue = (TextView)findViewById(R.id.inputValue);
 
-//        // ボタンが押されたらUSBに値を送り込む
+        BootstrapButton btnClear = findViewById(R.id.button_clear);
+        // リスナーをボタンに登録
+        btnClear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                tv.setText("");
+//                awesomeTextView.setBootstrapText(bootstrapText1);
+            }
+        });
+
+
+        BootstrapButton btnSend = findViewById(R.id.button_send);
+        // リスナーをボタンに登録
+        btnSend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SendUsb("1");
+            }
+        });
+
+        //        // ボタンが押されたらUSBに値を送り込む
 //        mOutputButton = (Button)findViewById(R.id.outputButton);
 //        mOutputButton.setOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -135,6 +157,32 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    public void SendUsb(String msg) {
+
+        if(ftDev == null){
+            return;
+        }
+
+        synchronized (ftDev) {
+            if (ftDev.isOpen() == false) {
+                Log.e("j2xx", "SendMessage: device not open");
+                return;
+            }
+
+            ftDev.setLatencyTimer((byte) 16);
+
+            if (msg != null) {
+                byte[] OutData = msg.getBytes();
+                ftDev.write(OutData, msg.length());
+                StringBuilder sb = new StringBuilder();
+                for (int idx = 0; idx < msg.length(); idx++) {
+                    sb.append(String.format(Locale.getDefault(), "%02x", OutData[idx])).append(" ");
+                }
+                String mData = sb.toString();
+                tv.append("TX -> " + mData + "\n");
+            }
+        }
+    }
 
     private class ReadThread  extends Thread
     {
@@ -185,46 +233,9 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
 
-//                synchronized(ftDev)
-//                {
-//                    iavailable = ftDev.getQueueStatus();
-//                    if (iavailable > 0) {
-//
-//                        if(iavailable > readLength){
-//                            iavailable = readLength;
-//                        }
-//
-//                        ftDev.read(readData, iavailable);
-//
-////                        String mData = new String(readData);
-//                        StringBuilder sb = new StringBuilder();
-//                        for (int index = 0; index < iavailable; index++) {
-//                            sb.append(String.format(Locale.getDefault(), "%02x", readData[index])).append(" ");
-//                        }
-//                        String mData = sb.toString();
-//
-//                        Message msg = mHandler.obtainMessage();
-//                        msg.obj = mData;
-//                        mHandler.sendMessage(msg);
-//                    }
-//                }
             }
         }
     }
-//
-//    /**
-//     * 描画処理はHandlerでおこなう
-//     */
-//    Handler mHandler = new Handler() {
-//        @Override
-//        public void handleMessage(Message msg) {
-//            String mData = (String)msg.obj;
-////            mInputValue.setText(mData);
-////            Log.d(TAG,"Received USB Data: " + mData);
-//            Toast.makeText(MainActivity.this, "Received USB Data: " + mData, Toast.LENGTH_LONG).show();
-//
-//        }
-//    };
 
     BroadcastReceiver mUsbReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
