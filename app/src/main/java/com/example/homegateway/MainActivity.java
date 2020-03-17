@@ -27,6 +27,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.beardedhen.androidbootstrap.AwesomeTextView;
 import com.ftdi.j2xx.D2xxManager;
 import com.ftdi.j2xx.FT_Device;
 
@@ -45,7 +46,19 @@ public class MainActivity extends AppCompatActivity {
 
 //    private TextView mInputValue;
 //    private Button mOutputButton;
+    private AwesomeTextView tv;
 
+    /**
+     * 描画処理はHandlerでおこなう
+     */
+    final Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            String mData = (String)msg.obj;
+            Toast.makeText(MainActivity.this, "Received USB Data: " + mData, Toast.LENGTH_LONG).show();
+            tv.append("RX <- " + mData + "\n");
+        }
+    };
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,10 +72,15 @@ public class MainActivity extends AppCompatActivity {
 
         mContext = this.getBaseContext();
 
+
+//        final AwesomeTextView tv = findViewById(R.id.logTextView);
+        tv = findViewById(R.id.logTextView);
+        tv.setText("");
+
         openUsb();
 
         TextView textVersion = findViewById(R.id.textVersion);
-        textVersion.setText("v0.0.0.3");
+        textVersion.setText("v0.0.0.1");
 
 //        mInputValue = (TextView)findViewById(R.id.inputValue);
 
@@ -147,6 +165,7 @@ public class MainActivity extends AppCompatActivity {
                     if(len > readLength) len = readLength;
                     synchronized (ftDev) {
                         len = ftDev.read(readData, len, 10); // timeout 10ms
+//                        len = ftDev.read(readData, len*2, 10); // timeout 10ms
                     }
 
                     StringBuilder sb = new StringBuilder();
@@ -192,19 +211,20 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-
-    /**
-     * 描画処理はHandlerでおこなう
-     */
-    Handler mHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            String mData = (String)msg.obj;
-//            mInputValue.setText(mData);
-//            Log.d(TAG,"Received USB Data: " + mData);
-            Toast.makeText(MainActivity.this, "Received USB Data: " + mData, Toast.LENGTH_LONG).show();
-        }
-    };
+//
+//    /**
+//     * 描画処理はHandlerでおこなう
+//     */
+//    Handler mHandler = new Handler() {
+//        @Override
+//        public void handleMessage(Message msg) {
+//            String mData = (String)msg.obj;
+////            mInputValue.setText(mData);
+////            Log.d(TAG,"Received USB Data: " + mData);
+//            Toast.makeText(MainActivity.this, "Received USB Data: " + mData, Toast.LENGTH_LONG).show();
+//
+//        }
+//    };
 
     BroadcastReceiver mUsbReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {

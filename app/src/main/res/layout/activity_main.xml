@@ -137,7 +137,7 @@
                 app:bootstrapHeading="h4" />
 
             <com.beardedhen.androidbootstrap.AwesomeTextView
-                android:id="@+id/billingCost"
+                android:id="@+id/logTextView"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/view"
