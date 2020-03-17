@@ -46,21 +46,31 @@ public class MainActivity extends AppCompatActivity {
     private boolean isReading = false;
     private ReadThread mReadThread;
 
-//    private TextView mInputValue;
-//    private Button mOutputButton;
     private AwesomeTextView tv;
 
     /**
-     * 描画処理はHandlerでおこなう
+     * データ受信処理はHandlerでおこなう
      */
     final Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             String mData = (String)msg.obj;
 //            Toast.makeText(MainActivity.this, "Received USB Data: " + mData, Toast.LENGTH_LONG).show();
+            mIoExHost.processRcvData(mData);
             tv.append("RX <- " + mData + "\n");
         }
     };
+
+    /**
+     * IOエキスパンダー(コールバックはprocessRcvDataから実行される)
+     */
+    final IoExpanderHost mIoExHost = new IoExpanderHost( new IoExpanderHost.Callback() {
+        @Override
+        public void sendData(String msg) {
+            sendUsb(msg);
+        }
+    });
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,17 +84,13 @@ public class MainActivity extends AppCompatActivity {
 
         mContext = this.getBaseContext();
 
-
-//        final AwesomeTextView tv = findViewById(R.id.logTextView);
         tv = findViewById(R.id.logTextView);
         tv.setText("");
 
         openUsb();
 
         TextView textVersion = findViewById(R.id.textVersion);
-        textVersion.setText("v0.0.0.1");
-
-//        mInputValue = (TextView)findViewById(R.id.inputValue);
+        textVersion.setText("v0.0.0.2");
 
         BootstrapButton btnClear = findViewById(R.id.button_clear);
         // リスナーをボタンに登録
@@ -92,7 +98,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 tv.setText("");
-//                awesomeTextView.setBootstrapText(bootstrapText1);
             }
         });
 
@@ -102,17 +107,23 @@ public class MainActivity extends AppCompatActivity {
         btnSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SendUsb("1");
+                sendUsb("1");
             }
         });
 
-        //        // ボタンが押されたらUSBに値を送り込む
-//        mOutputButton = (Button)findViewById(R.id.outputButton);
-//        mOutputButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                SendMessage("1");
-//            }
+        mIoExHost.addCommandFlow(new IoExpanderHost.WriteI2C("40", "FE")); // Slave Address:0x40, Write Data:0xFE
+        mIoExHost.addCommandFlow(new IoExpanderHost.WriteI2C("40", "E3")); // Slave Address:0x40, Write Data:0xE3
+        mIoExHost.addCommandFlow(new IoExpanderHost.ReadI2C("40", 3)); // Slave Address:0x40, Read Data:3 byte
+        mIoExHost.startCommandFlow(new IoExpanderHost.FlowCallback() {
+            @Override
+            public void handleGetData(String data) {
+                tv.append("FLOW RX : " + data + "\n");
+            }
+            @Override
+            public void endFlow(int result) {
+                ;
+            }
+        });
 
     }
 
@@ -157,7 +168,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void SendUsb(String msg) {
+    public void sendUsb(String msg) {
 
         if(ftDev == null){
             return;
@@ -213,7 +224,6 @@ public class MainActivity extends AppCompatActivity {
                     if(len > readLength) len = readLength;
                     synchronized (ftDev) {
                         len = ftDev.read(readData, len, 10); // timeout 10ms
-//                        len = ftDev.read(readData, len*2, 10); // timeout 10ms
                     }
 
                     StringBuilder sb = new StringBuilder();
@@ -226,11 +236,6 @@ public class MainActivity extends AppCompatActivity {
                     msg.obj = mData;
                     mHandler.sendMessage(msg);
 
-                }
-                else {
-                    synchronized (ftDev) {
-                        ftDev.read(readData, 1, 1); // dummy read(1 byte), timeout 1ms
-                    }
                 }
 
             }
