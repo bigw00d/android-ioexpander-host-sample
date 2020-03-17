@@ -12,6 +12,22 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="bottom|right"
+        android:orientation="horizontal"
+        android:weightSum="5">
+
+        <TextView
+            android:id="@+id/textVersion"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="right"
+            android:text="v0.0.0.1" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:gravity="center"
         android:orientation="horizontal"
         android:weightSum="5">
@@ -40,7 +56,7 @@
         android:weightSum="6">
 
         <com.beardedhen.androidbootstrap.BootstrapButton
-            android:id="@+id/bootstrap_button1"
+            android:id="@+id/button_connect"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
@@ -54,7 +70,7 @@
             app:showOutline="false" />
 
         <com.beardedhen.androidbootstrap.BootstrapButton
-            android:id="@+id/bootstrap_button2"
+            android:id="@+id/button_discon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
@@ -68,7 +84,7 @@
             app:showOutline="false" />
 
         <com.beardedhen.androidbootstrap.BootstrapButton
-            android:id="@+id/bootstrap_button3"
+            android:id="@+id/button_send"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
@@ -82,7 +98,7 @@
             app:showOutline="false" />
 
         <com.beardedhen.androidbootstrap.BootstrapButton
-            android:id="@+id/bootstrap_button4"
+            android:id="@+id/button_clear"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
@@ -121,7 +137,7 @@
                 app:bootstrapHeading="h4" />
 
             <com.beardedhen.androidbootstrap.AwesomeTextView
-                android:id="@+id/billingCost"
+                android:id="@+id/logTextView"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/view"
@@ -134,5 +150,6 @@
         </LinearLayout>
 
     </ScrollView>
+
 
 </LinearLayout>
